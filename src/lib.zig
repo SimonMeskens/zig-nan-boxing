@@ -81,7 +81,7 @@ pub const Dyn64 = packed union {
 
     /// Checks if the boxed value is a `NaN`.
     pub fn isNaN(self: Dyn64) bool {
-        return self.bits == bits_nan;
+        return self.bits & ~mask_sign == bits_nan;
     }
 
     /// Checks if the boxed value is a double.
@@ -303,6 +303,25 @@ test "Box - doubles" {
 
     // try expect(!boxed_nan.isDouble());
     // try expect(!boxed_nan.isNaN());
+    try expect(!boxed_nan.isBool());
+    try expect(!boxed_nan.isFalse());
+    try expect(!boxed_nan.isTrue());
+    try expect(!boxed_nan.isNull());
+    try expect(!boxed_nan.isPointer());
+    try expect(!boxed_nan.isString());
+    try expect(!boxed_nan.isUint());
+    try expect(!boxed_nan.isSint());
+
+    const neg_nan = -std.math.nan(f64);
+    const boxed_neg_nan = Dyn64{ .float = neg_nan };
+    try expect(boxed_neg_nan.isNaN());
+    try expect(boxed_neg_nan.isDouble());
+    try expectEqual(@as(u64, @bitCast(neg_nan)), boxed_neg_nan.bits);
+    try expectEqual(bits_nan | mask_sign, boxed_neg_nan.bits);
+    try expect(std.math.isNan(boxed_neg_nan.asDouble()));
+
+    // try expect(!boxed_neg_nan.isDouble());
+    // try expect(!boxed_neg_nan.isNaN());
     try expect(!boxed_nan.isBool());
     try expect(!boxed_nan.isFalse());
     try expect(!boxed_nan.isTrue());
