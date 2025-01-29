@@ -17,7 +17,7 @@ Example:
 ```zig
 const maybe: ?bool = true;         // Is this real life?
 
-var box = Box.from(42);            // Box an integer
+var box = Box.from(@as(u32, 42));  // Box an integer
 box = Box.from(maybe);             // Now it's a boolean
 
 if (box.isNull()) unreachable;     // Check if it's null

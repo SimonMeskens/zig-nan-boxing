@@ -227,8 +227,8 @@ pub const Dyn64 = packed union {
         switch (typeInfo) {
             .Float => return Dyn64.fromDouble(value),
             .Int => |info| switch (info.signedness) {
-                .unsigned => return Dyn64.fromUint(value),
-                .signed => return Dyn64.fromSint(value),
+                .unsigned => return Dyn64.fromUint(@as(u32, value)),
+                .signed => return Dyn64.fromSint(@as(i32, value)),
             },
             .Bool => return Dyn64.fromBool(value),
             .Null => return dyn_null,
@@ -459,7 +459,7 @@ test "Box - from" {
 test "Box - readme example" {
     const maybe: ?bool = true; // Is this real life?
 
-    var box = Dyn64.from(42); // Box an integer
+    var box = Dyn64.from(@as(u32, 42)); // Box an integer
     box = Dyn64.from(maybe); // Now it's a boolean
 
     if (box.isNull()) unreachable; // Check if it's null
